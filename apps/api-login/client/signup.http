@@ -1,0 +1,22 @@
+###
+POST localhost:3333/signup
+
+{
+  "username": "test@example.com",
+  "password": "123456"
+}
+
+###
+POST localhost:3333/signup
+
+{
+  "username": "test",
+  "password": "123456"
+}
+
+###
+POST localhost:3333/signup
+
+{
+  "username": "test",
+}
