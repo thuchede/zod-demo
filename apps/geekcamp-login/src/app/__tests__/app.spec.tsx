@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import App from './app';
+import App from '../app';
 
 describe('App', () => {
   it('should render successfully', () => {
@@ -10,6 +10,6 @@ describe('App', () => {
 
   it('should have a greeting as the title', () => {
     const { getByText } = render(<App />);
-    expect(getByText(/Welcome geekcamp-login/gi)).toBeTruthy();
+    expect(getByText(/Register for Geekcamp!/gi)).toBeTruthy();
   });
 });
