@@ -4,15 +4,18 @@
  */
 
 import express from 'express';
-import {signupController} from "./controllers/signup";
+import cors from 'cors';
+import { signupController } from './controllers/signup';
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api-login!' });
 });
 
-app.use(signupController)
+app.use(signupController);
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {
