@@ -67,9 +67,10 @@ export function App() {
             Email:
           </label>
           <input
-            type="text"
+            type="email"
             id={'email'}
             name={'email'}
+            required
             placeholder={'john.doe@example.com'}
             className={'py-1 px-2'}
           />
@@ -79,9 +80,13 @@ export function App() {
             Password:
           </label>
           <input
-            type="text"
+            type="password"
             id={'password'}
             name={'password'}
+            required
+            minLength={5}
+            pattern={PASSWORD_PATTERN}
+            title={PASSWORD_HINT}
             placeholder={'••••••••'}
             className={'py-1 px-2'}
           />
