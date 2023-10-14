@@ -1,14 +1,17 @@
 import { FormEvent, useState } from 'react';
+import { z } from 'zod';
 
 const PASSWORD_PATTERN =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/;
 const PASSWORD_HINT =
   'Need at least 1 lowercase, 1 uppercase, 1 number, 1 special char';
 
-type SignUpFormData = {
-  email?: string;
-  password?: string;
-};
+const SignUpFormData = z.object({
+  email: z.string().min(1, 'Required').email('Invalid email'),
+  password: z.string().min(1, 'Required').regex(PASSWORD_PATTERN, 'Too easy'),
+});
+
+type SignUpFormData = z.infer<typeof SignUpFormData>;
 
 function getFormValues(e: FormEvent<HTMLFormElement>): unknown {
   return Array.from<{ name: string; value: string }>(
@@ -31,27 +34,18 @@ export function App() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formValues = getFormValues(e) as SignUpFormData;
+    const formValues = getFormValues(e);
 
-    let hasError = false;
+    const result = SignUpFormData.safeParse(formValues);
 
-    if (!formValues.email) {
-      setEmailError('Required');
-      hasError ||= true;
-    } else if (!formValues.email.includes('@')) {
-      setEmailError('Invalid email');
-      hasError ||= true;
-    }
-
-    if (!formValues.password) {
-      setPasswordError('Required');
-      hasError ||= true;
-    } else if (!PASSWORD_PATTERN.test(formValues.password)) {
-      setPasswordError('Too easy');
-      hasError ||= true;
-    }
-
-    if (hasError) {
+    if (!result.success) {
+      setEmailError(
+        result.error.errors.find((err) => err.path.includes('email'))?.message
+      );
+      setPasswordError(
+        result.error.errors.find((err) => err.path.includes('password'))
+          ?.message
+      );
       return;
     }
 
