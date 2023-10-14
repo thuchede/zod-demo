@@ -1,5 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const PASSWORD_PATTERN =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/;
@@ -26,32 +28,19 @@ function getFormValues(e: FormEvent<HTMLFormElement>): unknown {
 
 export function App() {
   const [registered, setRegistered] = useState<boolean>(false);
-  const [emailError, setEmailError] = useState<string | undefined>(undefined);
-  const [passwordError, setPasswordError] = useState<string | undefined>(
-    undefined
-  );
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(SignUpFormData),
+  });
 
-    const formValues = getFormValues(e);
-
-    const result = SignUpFormData.safeParse(formValues);
-
-    if (!result.success) {
-      setEmailError(
-        result.error.errors.find((err) => err.path.includes('email'))?.message
-      );
-      setPasswordError(
-        result.error.errors.find((err) => err.path.includes('password'))
-          ?.message
-      );
-      return;
-    }
-
+  const handleSubmit = (data: SignUpFormData) => {
     fetch('http://localhost:3333/signup', {
       method: 'POST',
-      body: JSON.stringify(formValues),
+      body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -82,7 +71,7 @@ export function App() {
       <p className="text-3xl font-bold text-center">Register for Geekcamp!</p>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={rhfHandleSubmit(handleSubmit)}
         noValidate
         className={
           'flex flex-col gap-6 mx-auto max-w-md p-8 rounded-lg bg-gray-100 shadow-lg'
@@ -95,14 +84,15 @@ export function App() {
           <input
             type="email"
             id={'email'}
-            name={'email'}
+            {...register('email')}
             aria-required
-            onChange={() => setEmailError(undefined)}
             placeholder={'john.doe@example.com'}
             className={'py-1 px-2'}
           />
           <div className={'h-6'}>
-            {emailError && <p className="text-red-400">{emailError}</p>}
+            {errors.email && (
+              <p className="text-red-400">{errors.email.message}</p>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -112,14 +102,15 @@ export function App() {
           <input
             type="password"
             id={'password'}
-            name={'password'}
+            {...register('password')}
             required
-            onChange={() => setPasswordError(undefined)}
             placeholder={'••••••••'}
             className={'py-1 px-2'}
           />
           <div className={'h-6'}>
-            {passwordError && <p className="text-red-400">{passwordError}</p>}
+            {errors.password && (
+              <p className="text-red-400">{errors.password.message}</p>
+            )}
           </div>
         </div>
         <button
