@@ -18,10 +18,6 @@ function getFormValues(e: FormEvent<HTMLFormElement>): unknown {
 
 export function App() {
   const [registered, setRegistered] = useState<boolean>(false);
-  const [emailError, setEmailError] = useState<string | undefined>(undefined);
-  const [passwordError, setPasswordError] = useState<string | undefined>(
-    undefined
-  );
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,13 +70,9 @@ export function App() {
             type="text"
             id={'email'}
             name={'email'}
-            // onChange={() => setEmailError(undefined)}
             placeholder={'john.doe@example.com'}
             className={'py-1 px-2'}
           />
-          <div className={'h-6'}>
-            {emailError && <p className="text-red-400">{emailError}</p>}
-          </div>
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="password" className={'flex flex-col gap-1'}>
@@ -90,13 +82,9 @@ export function App() {
             type="text"
             id={'password'}
             name={'password'}
-            // onChange={() => setPasswordError(undefined)}
             placeholder={'••••••••'}
             className={'py-1 px-2'}
           />
-          <div className={'h-6'}>
-            {passwordError && <p className="text-red-400">{passwordError}</p>}
-          </div>
         </div>
         <button
           className={
